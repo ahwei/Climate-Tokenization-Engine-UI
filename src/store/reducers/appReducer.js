@@ -1,7 +1,7 @@
 import u from 'updeep';
 
-import { actions as appActions } from '../actions/appActions';
 import constants from '../../constants';
+import { actions as appActions } from '../actions/appActions';
 
 const initialState = {
   showProgressOverlay: false,

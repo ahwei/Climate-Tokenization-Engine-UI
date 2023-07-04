@@ -1,35 +1,35 @@
 import _ from 'lodash';
 import React, {
-  useState,
   useCallback,
-  useRef,
   useEffect,
   useMemo,
+  useRef,
+  useState,
 } from 'react';
-import styled from 'styled-components';
-import { useSelector, useDispatch } from 'react-redux';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useDispatch, useSelector } from 'react-redux';
+import styled from 'styled-components';
 
 import {
-  Tab,
-  Tabs,
-  TabPanel,
+  CreateTokenModal,
   DownloadIcon,
   H3,
+  Modal,
+  SearchInput,
+  SelectCreatable,
+  Tab,
+  TabPanel,
   Table,
   TableColumnTypeEnum,
-  SearchInput,
+  Tabs,
   modalTypeEnum,
-  Modal,
-  CreateTokenModal,
-  SelectCreatable,
 } from '../components';
+import constants from '../constants';
 import {
   getCountForTokensAndUntokenizedUnits,
   getTokens,
   getUntokenizedUnits,
 } from '../store/actions/appActions';
-import constants from '../constants';
 import { downloadXlsxFromDataAndHeadings } from '../utils/xlsxUtils';
 
 const StyledSectionContainer = styled('div')`
@@ -97,6 +97,7 @@ const CreateTokens = () => {
     untokenizedUnitsCount,
     tokensCount,
   } = useSelector(store => store);
+
   const [
     isTokenCreationPendingModalVisible,
     setIsTokenCreationPendingModalVisible,

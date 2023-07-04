@@ -1,10 +1,10 @@
 import _ from 'lodash';
 import constants from '../../constants';
 
-import { keyMirror } from '../store-functions';
 import { LANGUAGE_CODES } from '../../translations';
+import { keyMirror } from '../store-functions';
 
-import { untokenizedUnitsStub, projectsStub } from '../mocks';
+import { projectsStub, untokenizedUnitsStub } from '../mocks';
 
 export const actions = keyMirror(
   'ACTIVATE_PROGRESS_INDICATOR',
@@ -422,6 +422,7 @@ export const getTokens = ({
       }
 
       const onSuccessHandler = results => {
+        console.log('results', results);
         dispatch(
           addProjectDetailsToUnits({
             units: results.data,
@@ -552,7 +553,8 @@ const maybeServerOverrideFetch = async (url, payload) => {
   const doesSignInDataExist = apiKey != null && serverAddress != null;
 
   if (doesSignInDataExist) {
-    const payloadWithApiKey = { ...payload };
+    const payloadWithApiKey = { ...(payload ?? {}) };
+
     if (payloadWithApiKey?.headers) {
       payloadWithApiKey.headers = {
         ...payloadWithApiKey.headers,
@@ -561,17 +563,17 @@ const maybeServerOverrideFetch = async (url, payload) => {
     } else {
       payloadWithApiKey.headers = { 'x-api-key': apiKey };
     }
-
+    console.log('payloadWithApiKey', payloadWithApiKey);
     const serverAddressUrl =
-      serverAddress[serverAddress.length - 1] !== '/'
+      serverAddress?.[serverAddress.length - 1] !== '/'
         ? `${serverAddress}/`
         : serverAddressUrl;
-
+    console.log('serverAddressUrl', serverAddressUrl);
     const newUrl = url.replace(
       /(https:|http:|)(^|\/\/)(.*?\/)/g,
       serverAddressUrl,
     );
-
+    console.log('newUrl', newUrl, payloadWithApiKey);
     return fetch(newUrl, payloadWithApiKey);
   }
 
@@ -590,11 +592,22 @@ const fetchWrapper = ({
   responseStub,
 }) => {
   return async dispatch => {
+    console.log('payload', {
+      url,
+      payload,
+      successMessageId,
+      failedMessageId,
+      onSuccessHandler,
+      onFailedHandler,
+      isRequestMocked,
+      responseStub,
+    });
     if (isRequestMocked && responseStub) {
       onSuccessHandler(responseStub);
     } else {
       try {
         dispatch(activateProgressIndicator);
+
         const response = await maybeServerOverrideFetch(url, payload);
 
         const headers = response?.headers;
